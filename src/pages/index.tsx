@@ -5,11 +5,10 @@ import { trpc } from "../lib/trpc";
 const Home: React.FC = () => {
    const { isLoading, data, refetch } = trpc.useQuery(["todos"]);
    const createMutation = trpc.useMutation(["create"]);
+   const updateStateMutation = trpc.useMutation(["update-state"]);
    const deleteMutation = trpc.useMutation(["delete"]);
 
    if (isLoading || !data) return <div>Loading...</div>;
-
-   if (data.todos.length === 0) return <div>No todos...</div>;
 
    return (
       <div className="h-screen p-3">
@@ -17,10 +16,10 @@ const Home: React.FC = () => {
             <form
                onSubmit={async (e) => {
                   e.preventDefault();
-                  const val = (e.target as any).input.value;
+                  let val = (e.target as any).input.value;
                   if (val === "") return;
                   await createMutation.mutateAsync({ name: val });
-                  (e.target as any).input.value = "";
+                  val = "";
                   refetch();
                }}
                className="flex gap-2 mb-4"
@@ -33,18 +32,33 @@ const Home: React.FC = () => {
                <button>submit</button>
             </form>
          </div>
-         <ul>
+         <ul className="container max-w-xs">
             {data.todos.map((todo, index) => (
-               <li
-                  key={index}
-                  className="hover:line-through cursor-pointer w-fit"
-                  onClick={async () => {
-                     await deleteMutation.mutateAsync({ id: todo.id });
-                     refetch();
-                  }}
-               >
-                  {todo.name}
-               </li>
+               <div key={index} className="flex justify-between items-center">
+                  <li
+                     className={`${
+                        todo.complete && "line-through"
+                     } cursor-pointer w-fit`}
+                     onClick={async () => {
+                        await updateStateMutation.mutateAsync({
+                           id: todo.id,
+                           state: !todo.complete,
+                        });
+                        refetch();
+                     }}
+                     title="Toggle complete status"
+                  >
+                     {todo.name}
+                  </li>
+                  <button
+                     onClick={async () => {
+                        await deleteMutation.mutateAsync({ id: todo.id });
+                        refetch();
+                     }}
+                  >
+                     delete
+                  </button>
+               </div>
             ))}
          </ul>
       </div>

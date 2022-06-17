@@ -19,6 +19,18 @@ export const appRouter = trpc
          return await prisma.todo.create({ data: { name: input.name } });
       },
    })
+   .mutation("update-state", {
+      input: z.object({
+         id: z.string().uuid(),
+         state: z.boolean(),
+      }),
+      async resolve({ input }) {
+         return await prisma.todo.update({
+            where: { id: input.id },
+            data: { complete: input.state },
+         });
+      },
+   })
    .mutation("delete", {
       input: z.object({
          id: z.string().uuid(),
