@@ -12,26 +12,24 @@ const Home: React.FC = () => {
 
    return (
       <div className="h-screen p-3">
-         <div>
-            <form
-               onSubmit={async (e) => {
-                  e.preventDefault();
-                  const val = (e.target as any).input.value;
-                  if (val === "") return;
-                  await createMutation.mutateAsync({ name: val });
-                  (e.target as any).input.value = "";
-                  refetch();
-               }}
-               className="flex gap-2 mb-4"
-            >
-               <input
-                  name="input"
-                  placeholder="todo"
-                  className="bg-gray-100 border-2 rounded-md p-2"
-               />
-               <button>submit</button>
-            </form>
-         </div>
+         <form
+            onSubmit={async (e) => {
+               e.preventDefault();
+               const val = (e.target as any).input.value;
+               if (val === "") return;
+               await createMutation.mutateAsync({ name: val });
+               (e.target as any).input.value = "";
+               refetch();
+            }}
+            className="flex gap-2 mb-4"
+         >
+            <input
+               name="input"
+               placeholder="todo"
+               className="bg-gray-100 border-2 rounded-md p-2"
+            />
+            <button>submit</button>
+         </form>
          <ul className="container max-w-xs">
             {data.todos.map((todo, index) => (
                <div key={index} className="flex justify-between items-center">
