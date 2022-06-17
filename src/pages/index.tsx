@@ -16,10 +16,10 @@ const Home: React.FC = () => {
             <form
                onSubmit={async (e) => {
                   e.preventDefault();
-                  let val = (e.target as any).input.value;
+                  const val = (e.target as any).input.value;
                   if (val === "") return;
                   await createMutation.mutateAsync({ name: val });
-                  val = "";
+                  (e.target as any).input.value = "";
                   refetch();
                }}
                className="flex gap-2 mb-4"
