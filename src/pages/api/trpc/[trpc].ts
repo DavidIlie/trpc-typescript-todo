@@ -1,6 +1,6 @@
 import * as trpc from "@trpc/server";
 import * as trpcNext from "@trpc/server/adapters/next";
-import { z } from "zod";
+import * as yup from "yup";
 
 import prisma from "../../../lib/prisma";
 
@@ -12,8 +12,8 @@ export const appRouter = trpc
       },
    })
    .mutation("create", {
-      input: z.object({
-         name: z.string(),
+      input: yup.object({
+         name: yup.string().required(),
       }),
       async resolve({ input }) {
          await prisma.todo.create({ data: { name: input.name } });
@@ -21,9 +21,9 @@ export const appRouter = trpc
       },
    })
    .mutation("update-state", {
-      input: z.object({
-         id: z.string().uuid(),
-         state: z.boolean(),
+      input: yup.object({
+         id: yup.string().uuid().required(),
+         state: yup.boolean().required(),
       }),
       async resolve({ input }) {
          return await prisma.todo.update({
@@ -33,8 +33,8 @@ export const appRouter = trpc
       },
    })
    .mutation("delete", {
-      input: z.object({
-         id: z.string().uuid(),
+      input: yup.object({
+         id: yup.string().uuid().required(),
       }),
       async resolve({ input }) {
          await prisma.todo.delete({ where: { id: input.id } });
